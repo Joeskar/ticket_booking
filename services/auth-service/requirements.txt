@@ -1,0 +1,21 @@
+# Web
+fastapi==0.141.1
+uvicorn[standard]==0.52.4
+
+# Валидация и конфиг
+pydantic==2.13.4
+pydantic-settings==2.15.0
+
+# БД: пользователи, refresh-токены
+sqlalchemy[asyncio]==2.0.52
+asyncpg==0.31.0
+alembic==1.19.1
+
+# JWT: выпуск токенов и публикация JWKS (extra crypto нужен для RS256)
+pyjwt[crypto]==2.13.0
+
+# Хеширование паролей
+argon2-cffi==25.1.0
+
+# Разбор form-data в OAuth2PasswordRequestForm
+python-multipart==0.0.32

@@ -1,0 +1,15 @@
+# Web
+fastapi==0.141.1
+uvicorn[standard]==0.52.4
+
+# Валидация и конфиг
+pydantic==2.13.4
+pydantic-settings==2.15.0
+
+# БД: инвентарь мест, брони, outbox, processed_events
+sqlalchemy[asyncio]==2.0.52
+asyncpg==0.31.0
+alembic==1.19.1
+
+# Брокер: консьюмер ScreeningPublished, продюсер SeatsHeld/SeatsReleased
+aio-pika==10.0.1
