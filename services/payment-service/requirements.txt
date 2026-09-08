@@ -1,18 +1,16 @@
-# Web
 fastapi==0.141.1
 uvicorn[standard]==0.52.4
 
-# Валидация и конфиг
 pydantic==2.13.4
 pydantic-settings==2.15.0
 
-# БД: состояние саги, outbox, processed_events
 sqlalchemy[asyncio]==2.0.52
 asyncpg==0.31.0
 alembic==1.19.1
 
-# Брокер
 aio-pika==10.0.1
 
-# HTTP-клиент к мок-эквайрингу (за адаптером провайдера)
 httpx==0.28.1
+
+mypy==2.2
+
