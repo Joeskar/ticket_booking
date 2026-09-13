@@ -18,8 +18,8 @@ class Show(Base, UuidMixin):
         Integer, nullable=False
     )
     
-    age_rating: Mapped[str] = mapped_column(
-        String(15), nullable=False
+    age_rating: Mapped[int] = mapped_column(
+        Integer, nullable=False
     )
     
     poster_url: Mapped[str] = mapped_column(

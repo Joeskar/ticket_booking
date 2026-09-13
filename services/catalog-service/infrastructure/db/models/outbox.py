@@ -19,8 +19,7 @@ class OutBox(Base, UuidMixin, TimeStampMixin):
     )
     
     aggregate_id: Mapped[UUID] = mapped_column(
-        PG_UUID(as_uuid=True), nullable=False, 
-        unique=True, default=uuid4
+        PG_UUID(as_uuid=True), nullable=False, default=uuid4
     )
     
     event_type: Mapped[str] = mapped_column(

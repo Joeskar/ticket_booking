@@ -26,10 +26,6 @@ class HallSeat(Base, UuidMixin):
         String(50), nullable=False
     )
     
-    name: Mapped[str] = mapped_column(
-        String(50), nullable=False
-    )
-    
     row_no: Mapped[int] = mapped_column(
         Integer, nullable=False
     )
