@@ -1,18 +1,13 @@
-from typing import final
-from dataclasses import dataclass
-
-from exceptions import InvalidAgeRatingException
+from enum import IntEnum
 
 
-ALLOWED_MIN_AGES: frozenset[int] = frozenset({0, 6, 12, 16, 18})
+class AgeRating(IntEnum):
+    ZERO = 0
+    SIX = 6
+    TWELVE = 12
+    SIXTEEN = 16
+    EIGHTEEN = 18
 
-
-@final
-@dataclass(frozen=True, kw_only=True)
-class AgeRating:
-    value: int
+    def __str__(self) -> str:
+        return f"{self.value}+"
     
-    def __post_init__(self):
-        if self.value not in ALLOWED_MIN_AGES:
-            raise InvalidAgeRatingException("Unsuporrted age rating")
-        
