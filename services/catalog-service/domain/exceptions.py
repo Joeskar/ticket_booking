@@ -16,14 +16,25 @@ class BusinessRuleViolationException(DomainException):
 
 #for VO objects
 @final
-class NegativeAmountException(DomainValidationException):
-    """Raised when amount is negative"""
+class NegativeNumberException(DomainValidationException):
+    """Raised when number is negative"""
 
 
 @final
 class ScreeningInThePastException(DomainValidationException):
     """Raised when screening time is in the past"""
+    
 
+class InvalidAgeRatingException(DomainValidationException):
+    """_summary_
+
+    Args:
+        DomainValidationException (_type_): _description_
+    """
+
+@final
+class ScreeningAlreadyPublishedException(BusinessRuleViolationException):
+    ...
 
 @final
 class CurrencyMismatchException(BusinessRuleViolationException):
@@ -34,4 +45,16 @@ class CurrencyMismatchException(BusinessRuleViolationException):
 @final
 class ScreeningAlreadyPublishedException(BusinessRuleViolationException):
     """Raised when trying to modify an already published screening"""
-    
+
+
+@final
+class ScreeningAlreadyCancelledException(BusinessRuleViolationException):
+    """Raised when trying to cancel an already cancelled screening"""
+
+@final
+class ScreeningInThePastException(BusinessRuleViolationException):
+    """Raisen when screening in the past"""
+
+@final
+class InvalidTimeRangeException(DomainValidationException):
+    """Raised when start date later than end date"""

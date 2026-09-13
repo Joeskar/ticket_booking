@@ -1,10 +1,14 @@
-from dataclasses import dataclass
-from abc import ABC
+from dataclasses import dataclass, field
 
+from domain.events.base import DomainEvent
 
-class AggregateRootEntity(ABC):
-    def __init__(self):
-        pass
+@dataclass
+class AggregateRootEntity:
+    _events: list[DomainEvent] = field(
+        default_factory=list, init=False, repr=False, compare=False
+    )
     
+    def _add_event(self, event: DomainEvent) -> None:
+        self._events.append(event)
     
     
