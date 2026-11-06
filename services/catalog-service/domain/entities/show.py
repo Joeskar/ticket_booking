@@ -1,11 +1,15 @@
 from dataclasses import dataclass
+from typing import final
 
 from domain.shared.entity import AggregateRootEntity
+from domain.shared.ids import ShowId
 from domain.value_objects import Duration, AgeRating, ShowStatus
+from domain.exceptions import ShowNotPublishedException
 
 
-@dataclass
+@dataclass(eq=False)
 class ShowEntity(AggregateRootEntity):
+    id: ShowId
     title: str
     duration: Duration
     age_rating: AgeRating
@@ -15,4 +19,9 @@ class ShowEntity(AggregateRootEntity):
     
     def __post_init__(self):
         ...
+    
+    @final
+    def ensure_accepts_screenings(self) -> None:
+        if self.status is not ShowStatus.PUBLISHED:
+            raise ShowNotPublishedException(self.id)
         

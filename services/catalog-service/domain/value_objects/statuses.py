@@ -2,13 +2,12 @@ from enum import StrEnum
 
 
 class ScreeningStatus(StrEnum):
-    DRAFT = "DFAFT"
+    DRAFT = "DRAFT"
     PUBLISHED = "PUBLISHED"
     CANCELLED = "CANCELLED"
 
 
 class ShowStatus(StrEnum):
-    DRAFT = "DFAFT"
+    DRAFT = "DRAFT"
     PUBLISHED = "PUBLISHED"
     ARCHIVED = "ARCHIVED"
-    

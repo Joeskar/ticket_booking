@@ -8,7 +8,10 @@ class ScreeningRepository(Protocol):
     async def get(self, screening_id: ScreeningId) -> ScreeningEntity:
         ...
     
-    async def create(self, screening) -> ScreeningEntity:
+    async def add(self, screening) -> ScreeningEntity:
+        ...
+    
+    async def publish(self, screening_id: ScreeningId, user_id: int):
         ...
         
     async def overlap(self, screening) -> ScreeningEntity:

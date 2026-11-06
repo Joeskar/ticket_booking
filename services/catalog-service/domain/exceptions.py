@@ -58,3 +58,8 @@ class ScreeningInThePastException(BusinessRuleViolationException):
 @final
 class InvalidTimeRangeException(DomainValidationException):
     """Raised when start date later than end date"""
+
+
+@final
+class ShowNotPublishedException(DomainValidationException):
+    """Raised when start date later than end date"""
