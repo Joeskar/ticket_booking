@@ -3,13 +3,15 @@ from typing import Protocol
 from application.ports.outbox import OutBox
 from domain.repositories.show import ShowRepository
 from domain.repositories.screening import ScreeningRepository
+from application.ports.seats import SeatReader
 
 
 class UnitOfWork(Protocol):
     screenings_repo: ScreeningRepository
     shows_repo: ShowRepository
     outbox: OutBox
-    
+    seats: SeatReader
+
     async def __aenter__(self):
         ...
         

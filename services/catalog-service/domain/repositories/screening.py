@@ -5,16 +5,13 @@ from domain.entities.screening import ScreeningEntity
 
 
 class ScreeningRepository(Protocol):
-    async def get(self, screening_id: ScreeningId) -> ScreeningEntity:
+    async def get_for_update(self, screening_id: ScreeningId) -> ScreeningEntity:
         ...
     
-    async def add(self, screening) -> ScreeningEntity:
+    async def add(self, screening: ScreeningEntity) -> None:
         ...
     
-    async def publish(self, screening_id: ScreeningId, user_id: int):
+    async def save(self, screening: ScreeningEntity) -> None:
         ...
         
-    async def overlap(self, screening) -> ScreeningEntity:
-        ...
-    
     

@@ -8,10 +8,10 @@ from domain.exceptions import NegativeNumberException
 @final
 @dataclass(frozen=True, kw_only=True, order=True)
 class Duration:
-    value: int
+    minutes: int
 
     def __post_init__(self):
-        if self.value < 0:
+        if self.minutes <= 0:
             raise NegativeNumberException(f"Value must not be negative")
         
     def as_timedelta(self) -> timedelta:

@@ -12,13 +12,13 @@ class CreateShow:
     
     async def __call__(self, cmd: CreateShowCommand):
         async with self._uow:
-            duration = Duration(minutes=cmd.duration_minutes),
-            age_rating = AgeRating(value=cmd.age_rating),
+            duration = Duration(minutes=cmd.duration_minutes)
+            age_rating = AgeRating(cmd.age_rating)
             
             show = ShowEntity(
                 id=ShowId(uuid4()),
                 title=cmd.title,
-                description=cmd.descrtiption,
+                description=cmd.description,
                 age_rating=age_rating,
                 poster_url=cmd.poster_url,
                 duration=duration              

@@ -5,8 +5,13 @@ from uuid import UUID
 @dataclass(frozen=True, kw_only=True)
 class CreateShowCommand:
     title: str
-    descrtiption: str | None = None
-    duration: int
-    age_rating: str
-    poster_url: str
-    user_id: int
+    description: str | None = None
+    duration_minutes: int
+    age_rating: int
+    poster_url: str | None = None
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class PublishShowCommand:
+    show_id: UUID
+    

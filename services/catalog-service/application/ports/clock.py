@@ -4,5 +4,5 @@ from typing import Protocol
 
 class Clock(Protocol):
     def now(self) -> datetime:
-        return datetime.now()
+        ...
     

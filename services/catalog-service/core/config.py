@@ -15,7 +15,7 @@ class ModelConfig(BaseSettings):
     )
     
 
-class EnvironmentEnum(str, StrEnum):
+class EnvironmentEnum(StrEnum):
     PRODUCTION = "PRODUCTION"
     TEST = "TEST"
     LOCAL = "LOCAL"
@@ -69,10 +69,10 @@ class CorsSettings(ModelConfig):
     
 
 class Settings(BaseSettings):
-    app: AppSettings
-    db: DbSettings
-    broker: BrokerSettings
-    cors: CorsSettings
+    app: AppSettings = Field(default_factory=AppSettings)
+    db: DbSettings = Field(default_factory=DbSettings)
+    broker: BrokerSettings = Field(default_factory=BrokerSettings)
+    cors: CorsSettings = Field(default_factory=CorsSettings)
     
 
 settings = Settings()

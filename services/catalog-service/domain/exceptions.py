@@ -18,7 +18,7 @@ class BusinessRuleViolationException(DomainException):
 @final
 class NegativeNumberException(DomainValidationException):
     """Raised when number is negative"""
-
+    
 
 @final
 class ScreeningInThePastException(DomainValidationException):
@@ -26,16 +26,9 @@ class ScreeningInThePastException(DomainValidationException):
     
 
 class InvalidAgeRatingException(DomainValidationException):
-    """_summary_
-
-    Args:
-        DomainValidationException (_type_): _description_
-    """
-
-@final
-class ScreeningAlreadyPublishedException(BusinessRuleViolationException):
     ...
-
+    
+    
 @final
 class CurrencyMismatchException(BusinessRuleViolationException):
     """Raised when currencies don't match in an operation"""
@@ -52,14 +45,35 @@ class ScreeningAlreadyCancelledException(BusinessRuleViolationException):
     """Raised when trying to cancel an already cancelled screening"""
 
 @final
-class ScreeningInThePastException(BusinessRuleViolationException):
-    """Raisen when screening in the past"""
-
-@final
 class InvalidTimeRangeException(DomainValidationException):
     """Raised when start date later than end date"""
 
 
 @final
-class ShowNotPublishedException(DomainValidationException):
+class ShowNotPublishedException(BusinessRuleViolationException):
     """Raised when start date later than end date"""
+    
+
+class NotFoundException(DomainException):
+    ...
+
+
+@final
+class ShowNotFoundException(NotFoundException):
+    ...
+
+
+@final
+class ScreeningNotFoundException(NotFoundException):
+    ...    
+    
+
+@final
+class ShowAlreadyPublishedException(BusinessRuleViolationException):
+    ...
+
+
+@final
+class HallHasNoSeatsException(BusinessRuleViolationException):
+    ...
+    

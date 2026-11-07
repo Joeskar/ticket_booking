@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from sqlalchemy import String, ForeignKey, Integer
+from sqlalchemy import String, ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from infrastructure.db.base import Base
@@ -37,5 +37,7 @@ class HallSeat(Base, UuidMixin):
     seat_type: Mapped[str] = mapped_column(
         String(30), nullable=False
     )
+    
+    __table_args__ = (UniqueConstraint("hall_id", "row_no", "seat_no"),)
     
     

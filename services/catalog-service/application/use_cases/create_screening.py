@@ -4,7 +4,7 @@ from application.ports import UnitOfWork
 from application.dtos import CreateScreeningCommand
 from domain.value_objects import Period, Money
 from domain.entities.screening import ScreeningEntity
-from domain.shared.ids import ScreeningId, ShowId
+from domain.shared.ids import ScreeningId, ShowId, HallId
 
 
 class CreateScreening:
@@ -21,8 +21,8 @@ class CreateScreening:
             
             screening = ScreeningEntity(
                 id=ScreeningId(uuid4()),
-                hall_id=cmd.hall_id,
-                show_id=cmd.show_id,
+                hall_id=HallId(cmd.hall_id),
+                show_id=ShowId(cmd.show_id),
                 money=price,
                 period=period,
             )
