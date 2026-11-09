@@ -1,11 +1,3 @@
-"""Доставляет события из таблицы outbox в RabbitMQ.
-
-Гарантия: at-least-once. Если процесс упадёт после подтверждения брокера, но до
-commit, событие уйдёт повторно с тем же message_id, поэтому потребитель обязан
-отбрасывать дубли по message_id.
-
-Запуск: python -m infrastructure.messaging.rabbitmq.relay
-"""
 import asyncio
 import contextlib
 import json
@@ -42,9 +34,8 @@ def _to_message(row: OutBox) -> aio_pika.Message:
 
 
 async def publish_batch(exchange: AbstractExchange) -> int:
-    """Публикует пачку событий и возвращает, сколько из них подтвердил брокер."""
     async with async_session() as session:
-        # SKIP LOCKED: другая копия relay возьмёт следующие строки, а не будет ждать эти.
+        # тут использую skip_locked для того, что бы пропускать строки которые могут взять копии relay
         rows = await session.scalars(
             select(OutBox)
             .where(OutBox.published_at.is_(None))
@@ -56,8 +47,6 @@ async def publish_batch(exchange: AbstractExchange) -> int:
         published = 0
         try:
             for row in rows.all():
-                # mandatory + on_return_raises: событие без очереди даст DeliveryError
-                # и останется в outbox, а не пропадёт молча.
                 await exchange.publish(
                     _to_message(row),
                     routing_key=row.event_type,
@@ -67,8 +56,6 @@ async def publish_batch(exchange: AbstractExchange) -> int:
                 row.published_at = datetime.now(timezone.utc)
                 published += 1
         finally:
-            # Подтверждённое брокером фиксируем и при сбое на середине пачки,
-            # иначе эти строки ушли бы повторно.
             await session.commit()
 
         return published
