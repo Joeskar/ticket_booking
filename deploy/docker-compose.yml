@@ -1,0 +1,166 @@
+name: ticket_booking
+
+x-db-credentials: &db-credentials
+  POSTGRES_USER: ticket
+  POSTGRES_PASSWORD: ticket
+
+x-service-env: &service-env
+  <<: *db-credentials
+  ENVIRONMENT: LOCAL
+  SQL_HOST: postgres
+  SQL_PORT: 5432
+  ECHO: "false"
+  BROKER_URL: amqp://guest:guest@rabbitmq:5672/
+
+x-booking-env: &booking-env
+  <<: *service-env
+  POSTGRES_DB: booking
+  HOLD_TTL_SECONDS: ${HOLD_TTL_SECONDS:-300}
+
+x-payment-env: &payment-env
+  <<: *service-env
+  POSTGRES_DB: payment
+
+x-wait-for-infra: &wait-for-infra
+  postgres:
+    condition: service_healthy
+  rabbitmq:
+    condition: service_healthy
+
+x-api-healthcheck: &api-healthcheck
+  test: ["CMD", "python", "-c", "import socket; socket.create_connection(('127.0.0.1', 8000), 2)"]
+  interval: 3s
+  timeout: 3s
+  retries: 20
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      <<: *db-credentials
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-databases.sql:/docker-entrypoint-initdb.d/init-databases.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U $${POSTGRES_USER} -d postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  catalog:
+    build: ../services/catalog-service
+    environment:
+      <<: *service-env
+      PROJECT_NAME: catalog-service
+      POSTGRES_DB: catalog
+    ports:
+      - "8001:8000"
+    healthcheck: *api-healthcheck
+    depends_on: *wait-for-infra
+
+  catalog-relay:
+    build: ../services/catalog-service
+    command: ["python", "-m", "infrastructure.messaging.rabbitmq.relay"]
+    init: true 
+    environment:
+      <<: *service-env
+      PROJECT_NAME: catalog-relay
+      POSTGRES_DB: catalog
+    restart: unless-stopped
+    depends_on:
+      <<: *wait-for-infra
+      catalog:
+        condition: service_healthy
+
+  booking:
+    build: ../services/booking-service
+    environment:
+      <<: *booking-env
+      PROJECT_NAME: booking-service
+    ports:
+      - "8002:8000"
+    healthcheck: *api-healthcheck
+    depends_on: *wait-for-infra
+
+  booking-relay:
+    build: ../services/booking-service
+    command: ["python", "-m", "infrastructure.rabbitmq.relay"]
+    init: true
+    environment:
+      <<: *booking-env
+      PROJECT_NAME: booking-relay
+    restart: unless-stopped
+    depends_on: &wait-for-booking
+      <<: *wait-for-infra
+      booking:
+        condition: service_healthy
+
+  booking-consumer:
+    build: ../services/booking-service
+    command: ["python", "-m", "infrastructure.rabbitmq.consumer"]
+    init: true
+    environment:
+      <<: *booking-env
+      PROJECT_NAME: booking-consumer
+    restart: unless-stopped
+    depends_on: *wait-for-booking
+
+  booking-expirer:
+    build: ../services/booking-service
+    command: ["python", "-m", "workers.expire_holds"]
+    init: true
+    environment:
+      <<: *booking-env
+      PROJECT_NAME: booking-expirer
+    restart: unless-stopped
+    depends_on: *wait-for-booking
+
+  payment:
+    build: ../services/payment-service
+    environment:
+      <<: *payment-env
+      PROJECT_NAME: payment-service
+    ports:
+      - "8003:8000"
+    healthcheck: *api-healthcheck
+    depends_on: *wait-for-infra
+
+  payment-relay:
+    build: ../services/payment-service
+    command: ["python", "-m", "infrastructure.rabbitmq.relay"]
+    init: true
+    environment:
+      <<: *payment-env
+      PROJECT_NAME: payment-relay
+    restart: unless-stopped
+    depends_on: &wait-for-payment
+      <<: *wait-for-infra
+      payment:
+        condition: service_healthy
+
+  payment-consumer:
+    build: ../services/payment-service
+    command: ["python", "-m", "infrastructure.rabbitmq.consumer"]
+    init: true
+    environment:
+      <<: *payment-env
+      PROJECT_NAME: payment-consumer
+    restart: unless-stopped
+    depends_on: *wait-for-payment
+
+volumes:
+  postgres_data:

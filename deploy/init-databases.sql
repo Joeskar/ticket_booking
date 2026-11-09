@@ -1,0 +1,3 @@
+CREATE DATABASE catalog;
+CREATE DATABASE booking;
+CREATE DATABASE payment;
